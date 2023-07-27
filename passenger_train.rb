@@ -1,6 +1,7 @@
-class PassengerTrain < PassengerTrain
+# frozen_string_literal: true
 
-  def initialize(number, type = "passenger")
+class PassengerTrain < Train
+  def initialize(number, type = 'passenger')
     super
   end
 
@@ -8,8 +9,7 @@ class PassengerTrain < PassengerTrain
     if car.instance_of?(PassengerCar)
       super(car)
     else
-      puts "Извините, пассажирскому поезду можно прицепить только пассажирский вагон."
+      puts 'Извините, пассажирскому поезду можно прицепить только пассажирский вагон.'
     end
   end
-
 end

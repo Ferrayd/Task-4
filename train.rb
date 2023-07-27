@@ -1,5 +1,6 @@
-class Train
+# frozen_string_literal: true
 
+class Train
   attr_accessor :speed, :number, :cars, :route, :station
   attr_reader :type
 
@@ -16,21 +17,21 @@ class Train
 
   def add_car(car)
     if speed.zero?
-      self.cars << car
+      cars << car
       puts "К поезду №#{number} прицепили вагон."
     else
-      puts "На ходу нельзя прицеплять вагоны!"
+      puts 'На ходу нельзя прицеплять вагоны!'
     end
   end
 
   def remove_car(car)
     if !cars.include?(car)
-      puts "Такого вагона в этом поезде нет"
+      puts 'Такого вагона в этом поезде нет'
     elsif speed.zero?
-      self.cars.delete(car)
+      cars.delete(car)
       puts "От поезда №#{number} отцепили вагон."
     else
-      puts "На ходу нельзя отцеплять вагоны!"
+      puts 'На ходу нельзя отцеплять вагоны!'
     end
   end
 
@@ -41,11 +42,11 @@ class Train
 
   def go_to(station)
     if route.nil?
-      puts "Без маршрута поезд заблудится."
+      puts 'Без маршрута поезд заблудится.'
     elsif @station == station
       puts "Поезд №#{@number} и так на станции #{@station.name}"
     elsif route.stations.include?(station)
-      @station.send_train(self) if @station
+      @station&.send_train(self)
       @station = station
       station.get_train(self)
     else
@@ -55,7 +56,7 @@ class Train
 
   def stations_around
     if route.nil?
-      puts "Маршрут не задан"
+      puts 'Маршрут не задан'
     else
       station_index = route.stations.index(station)
       puts "Сейчас поезд на станции #{station.name}."
