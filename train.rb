@@ -16,11 +16,11 @@ class Train
   end
 
   def add_car(car)
-    if speed.zero?
-      cars << car
+    if speed.zero? 
+      self.cars << car
       puts "К поезду №#{number} прицепили вагон."
-    else
-      puts 'На ходу нельзя прицеплять вагоны!'
+    else 
+      puts "На ходу нельзя прицеплять вагоны!"
     end
   end
 
