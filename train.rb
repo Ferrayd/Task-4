@@ -16,6 +16,10 @@ class Train
   end
 
   def add_car(car)
+    if type == car.type
+  end
+
+  def add_car(car)
     if speed.zero? 
       self.cars << car
       puts "К поезду №#{number} прицепили вагон."
