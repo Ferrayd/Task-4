@@ -105,9 +105,7 @@ class TrainApp
       if train.nil?
         puts 'Поезда с таким номером нет'
       else
-        unless train.add_car(CAR_TYPES[train.type].new)
-          puts 'Не тот тип!'
-        end
+        train.add_car(train)
       end
     end
   end
@@ -175,7 +173,7 @@ class TrainApp
 
   def list_all_trains
     puts 'Список поездов:'
-  @trains.each { |train| puts train.number }
+    @trains.each { |train| puts "#{train.number} #{train.type}"}
   end
 
   def show_actions_prompt

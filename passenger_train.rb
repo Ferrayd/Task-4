@@ -5,11 +5,4 @@ class PassengerTrain < Train
     super
   end
 
-  def add_car(car)
-    if car.instance_of?(PassengerCar)
-      super(car)
-    else
-      puts 'Извините, пассажирскому поезду можно прицепить только пассажирский вагон.'
-    end
-  end
 end

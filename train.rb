@@ -16,13 +16,13 @@ class Train
   end
 
   def add_car(car)
-    if type == car.type
-  end
-
-  def add_car(car)
-    if speed.zero? 
-      self.cars << car
-      puts "К поезду №#{number} прицепили вагон."
+    if speed.zero?
+      if type == car.type
+        self.cars << car
+        puts "К поезду №#{number} прицепили вагон."
+      else
+        puts 'Не тот тип!'
+      end
     else 
       puts "На ходу нельзя прицеплять вагоны!"
     end
@@ -68,4 +68,9 @@ class Train
       puts "Следующая - #{route.stations[station_index + 1].name}." if station_index != route.stations.size - 1
     end
   end
+
+  def train_info(train)
+    "поезд #{number}, тип: #{type}, вагонов: #{cars}"
+  end
+
 end
