@@ -69,8 +69,4 @@ class Train
     end
   end
 
-  def train_info(train)
-    "поезд #{number}, тип: #{type}, вагонов: #{cars}"
-  end
-
 end
