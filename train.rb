@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 class Train
-  attr_accessor :speed, :number, :cars, :route, :station
-  attr_reader :type
+  attr_reader :number, :cars, :type, :speed, :route, :station
 
-  def initialize(number, type)
+  def initialize(number)
     @number = number
-    @type = type
-    @cars = []
     @speed = 0
+    @cars = []
+    self.class.list << self
+  end
+
+  def self.list
+    @@list ||= []
   end
 
   def stop
@@ -16,27 +19,11 @@ class Train
   end
 
   def add_car(car)
-    if speed.zero?
-      if type == car.type
-        self.cars << car
-        puts "К поезду №#{number} прицепили вагон."
-      else
-        puts 'Не тот тип!'
-      end
-    else 
-      puts "На ходу нельзя прицеплять вагоны!"
-    end
+    @cars << car if !@cars.member?(car) && car.type == type
   end
 
   def remove_car(car)
-    if !cars.include?(car)
-      puts 'Такого вагона в этом поезде нет'
-    elsif speed.zero?
-      cars.delete(car)
-      puts "От поезда №#{number} отцепили вагон."
-    else
-      puts 'На ходу нельзя отцеплять вагоны!'
-    end
+    @cars.delete(car) if car.type == type
   end
 
   def take_route(route)
@@ -68,5 +55,18 @@ class Train
       puts "Следующая - #{route.stations[station_index + 1].name}." if station_index != route.stations.size - 1
     end
   end
+end
 
+class PassengerTrain < Train
+  def initialize(number)
+    super
+    @type = :passenger
+  end
+end
+
+class CargoTrain < Train
+  def initialize(number)
+    super
+    @type = :cargo
+  end
 end

@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class TrainApp
-  CAR_TYPES = { 'cargo' => CargoCar, 'passenger' => PassengerCar }.freeze
 
   def initialize
-    @trains = []
     @routes = []
     @stations = []
   end
@@ -22,16 +20,18 @@ class TrainApp
       when 2
         create_train
       when 3
-        add_wagon_to_train
+        create_car
       when 4
-        remove_wagon_from_train
+        add_wagon_to_train
       when 5
-        move_train_to_station
+        remove_wagon_from_train
       when 6
-        list_stations
+        move_train_to_station
       when 7
-        list_trains_on_station
+        list_stations
       when 8
+        list_trains_on_station
+      when 9
         list_all_trains
       else
         show_actions_prompt
@@ -47,12 +47,13 @@ class TrainApp
     0. Выход
     1. Создать станцию
     2. Создать поезд
-    3. Прицепить вагон к поезду
-    4. Отцепить вагон от поезда
-    5. Поместить поезд на станцию
-    6. Просмотреть список станций
-    7. Просмотреть список поездов находящихся на станции
-    8. Список всех поездов
+    3. Создать вагон
+    4. Прицепить вагон к поезду
+    5. Отцепить вагон от поезда
+    6. Поместить поезд на станцию
+    7. Просмотреть список станций
+    8. Просмотреть список поездов находящихся на станции
+    9. Список всех поездов
     >>".chomp)
   end
 
@@ -67,16 +68,14 @@ class TrainApp
     list_stations
     puts 'Введите начальную станцию:'
     first_station_name = gets.chomp
-    first_station = @stations.find { |station| station.name = first_station_name}
+    first_station = @stations.find { |station| station.name = first_station_name }
     puts 'Введите конечную станцию:'
     last_station_name = gets.chomp
-    last_station = @stations.find { |station| station.name = last_station_name}
+    last_station = @stations.find { |station| station.name = last_station_name }
     @routes << Route.new(first_station, last_station)
   end
 
-  def add_station
-
-  end
+  def add_station; end
 
   def create_train
     puts 'C каким номером?'
@@ -85,57 +84,68 @@ class TrainApp
     choice = gets.chomp.to_i
     case choice
     when 1
-      @trains << PassengerTrain.new(number)
+      PassengerTrain.new(number)
       puts "Создан пассажирский поезд №#{number}"
     when 2
-      @trains << CargoTrain.new(number)
+      CargoTrain.new(number)
       puts "Создан грузовой поезд №#{number}"
     else
       puts 'Поезд не создан. Введите 1 или 2'
     end
   end
 
-  def add_wagon_to_train
-    if @trains.empty?
-      puts 'Сначала создайте поезд'
+  def create_car
+    puts 'Создаем вагон.'
+    puts 'Введите номер вагона:'
+    number = gets.chomp
+
+    puts 'Выберите тип вагона:'
+    puts '1 - пассажирский, 2 - грузовой'
+
+    choice = gets.chomp.to_i
+    case choice
+    when 1
+      PassengerCar.new(number)
+    when 2
+      CargoCar.new(number)
     else
-      puts 'К какому? (введите номер)'
-      number = gets.chomp
-      train = @trains.detect { |train| train.number == number }
-      if train.nil?
-        puts 'Поезда с таким номером нет'
-      else
-        train.add_car(train)
-      end
+      puts 'Вагон не создан. Введите 1 или 2'
+      return
     end
+
+    puts("Создан новый вагон <#{Car.list.last.number}>")
+  end
+
+  def add_wagon_to_train
+    puts 'Добавляем вагон поезду. Выберите поезд:'
+    list_all_trains
+    train = Train.list[gets.chomp.to_i]
+
+    puts 'Выберите вагон:'
+    print_cars
+    train.add_car(Car.list[gets.chomp.to_i])
+
+    puts("Изменен состав поезда <#{train.number}>")
   end
 
   def remove_wagon_from_train
-    if @trains.empty?
-      puts 'Сначала создайте поезд'
-    else
-      puts 'От какого? (введите номер)'
-      number = gets.chomp
-      train = @trains.detect { |train| train.number == number }
-      if train.nil?
-        puts 'Поезда с таким номером нет'
-      elsif train.cars.empty?
-        puts 'У этого поезда и так нет вагонов'
-      else
-        train.remove_car(train.cars.last)
-      end
-    end
+    puts 'Отцепляем вагон от поезда. Выберите поезд:'
+    train = Train.list[gets.chomp.to_i]
+
+    puts 'Выберите вагон:'
+    train.remove_car(train.cars[gets.chomp.to_i])
+
+    puts("Изменен состав поезда <#{train.number}>")
   end
 
   def move_train_to_station
-    if @trains.empty?
+    if !Train.list
       puts 'Сначала Сначала создайте поезд'
     elsif @stations.empty?
       puts 'Сначала создайте станцию'
     else
-      puts 'Какой поезд? (введите номер)'
-      number = gets.chomp
-      train = @trains.detect { |train| train.number == number }
+      puts 'Какой поезд?'
+      train = Train.list[gets.chomp.to_i]
       if train.nil?
         puts 'Поезда с таким номером нет'
       else
@@ -172,14 +182,13 @@ class TrainApp
   end
 
   def list_all_trains
-    puts 'Список поездов:'
-    @trains.each { |train| puts "#{train.number} #{train.type}"}
+    Train.list.each_with_index { |v, i| puts "#{i}. #{v.number}, #{v.type}" }
+  end
+  def print_cars
+    Car.list.each_with_index { |v, i| puts "#{i}. #{v.number}, #{v.type}" }
   end
 
   def show_actions_prompt
     puts 'Необходимо выбрать один из предложенных вариантов'
   end
 end
-
-my_app = TrainApp.new
-my_app.action
